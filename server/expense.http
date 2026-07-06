@@ -1,0 +1,81 @@
+@baseUrl = http://localhost:3000/api
+
+### Health check
+GET {{baseUrl}}/health
+
+### List all expenses
+GET {{baseUrl}}/expenses
+
+### Create expense (valid)
+# @name createExpense
+POST {{baseUrl}}/expenses
+Content-Type: application/json
+
+{
+  "description": "Cafe con medialunas",
+  "amount": 3500,
+  "category": "food"
+}
+
+### Create expense with explicit date
+POST {{baseUrl}}/expenses
+Content-Type: application/json
+
+{
+  "description": "Monthly bus pass",
+  "amount": 12000,
+  "category": "transport",
+  "date": "2026-07-01T00:00:00.000Z"
+}
+
+### Get expense by id (uses the id from "Create expense (valid)")
+GET {{baseUrl}}/expenses/{{createExpense.response.body._id}}
+
+### Update expense (partial)
+PUT {{baseUrl}}/expenses/{{createExpense.response.body._id}}
+Content-Type: application/json
+
+{
+  "amount": 4200
+}
+
+### Delete expense
+DELETE {{baseUrl}}/expenses/{{createExpense.response.body._id}}
+
+###
+### Error cases — each one exercises a different branch of the error handler
+###
+
+### 400 - Zod validation (empty description, negative amount, unknown category)
+POST {{baseUrl}}/expenses
+Content-Type: application/json
+
+{
+  "description": "",
+  "amount": -5,
+  "category": "crypto"
+}
+
+### 400 - Broken JSON body (body-parser SyntaxError)
+POST {{baseUrl}}/expenses
+Content-Type: application/json
+
+{ broken
+
+### 400 - Invalid id format (Mongoose CastError)
+GET {{baseUrl}}/expenses/abc
+
+### 404 - Valid ObjectId that does not exist
+GET {{baseUrl}}/expenses/000000000000000000000000
+
+### 400 - Update with invalid category (runValidators)
+PUT {{baseUrl}}/expenses/000000000000000000000000
+Content-Type: application/json
+
+{
+  "category": "crypto"
+}
+
+
+### Category summary
+GET {{baseUrl}}/expenses/summary
