@@ -14,7 +14,7 @@ function App() {
           <h1 className="text-3xl font-semibold tracking-tight">Expenses</h1>
           <div className="mt-4 flex gap-2">
             <span className="rounded-full bg-zinc-900 px-4 py-1.5 text-sm font-medium text-white">
-              {expenses.length} items
+              {expenses.length == 1 ? "1 item" : `${expenses.length} items`}
             </span>
             <span className="rounded-full bg-accent px-4 py-1.5 text-sm font-semibold">
               Total ${total.toLocaleString()}
